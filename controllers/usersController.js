@@ -1,11 +1,9 @@
 const models = require('../models');
 const passHash = require('password-hash');
 const jwt = require('jsonwebtoken');
-const jwtHelp = require('../helper/jwthelper').check_token;
-const passport = require('passport');
-var Strategy = require('passport-local').Strategy;
-var methode = {}
 
+
+var methode = {}
 
 
 methode.signup = (req, res, next)=>{
@@ -34,34 +32,23 @@ methode.signup = (req, res, next)=>{
   })
 };
 
-methode.signin = (username, password, done) => {
+methode.signin = (username, password, callback)=>{
   models.User.findOne({
-      username: username
-    })
-  .then((query) => {
-    console.log(username)
-    console.log(password)
-    console.log(query)
-      if (!query) {
-        done({
-          success: false,
-          message: 'User not found.'
-        });
-      } else if (query) {
-        if (passHash.verify(password, query.password)) {
-          done(null, {
-            success: true,
-            message: 'Enjoy your token!',
-            token: jwtHelp.sign(query)
-          });
-        } else {
-          done(null, {
-            message: 'Authentication failed. Wrong password.'
-          });
-        }
-      }
-    })
-  }
+    where :{
+      username : username
+    }
+  })
+  .then((query)=>{
+    if(passHash.verify(password, query.password)){
+      var myToken = jwt.sign({username : query.username, access : query.access}, 'secret', {expiresIn : '1h'});
+      callback(null,{token : myToken})
+    }else{
+      callback(null,"gagal")
+    }
+  })
+}
+
+
 
 methode.getAllData = function(req, res, next) {
   models.User.findAll({})

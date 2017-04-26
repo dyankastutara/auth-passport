@@ -3,6 +3,7 @@ var methode ={}
 
   methode.check_token = (req, res, next) =>{
     jwt.verify(req.headers.token, 'secret', (err, decoded) =>{
+      console.log(decoded)
       if(decoded){
         if(decoded.access === 'admin'){
           next();
@@ -10,7 +11,7 @@ var methode ={}
           res.send('You can not access')
         }
       }else{
-        res.send('You can not access')
+        res.send('tes')
       }
     })
   }
@@ -24,7 +25,7 @@ var methode ={}
           res.send('You can not access')
         }
       }else{
-        res.send('Yo can not access')
+        res.send('tes')
       }
     })
   }
